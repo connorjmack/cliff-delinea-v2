@@ -23,7 +23,7 @@ python 03_evaluate_model.py --checkpoint experiments/runs/checkpoints/best_model
 python 04_predict.py --checkpoint experiments/runs/checkpoints/best_model.pth --aoi_path ../../datasets/validation/aoi5
 ```
 
-`02_train_model.py` writes to `experiments/runs/`, the folder that holds the published weights. Copy them elsewhere first, or change `paths` in `config/default_config.yaml`.
+The default checkpoint folder, `experiments/runs/checkpoints/`, holds the published weights. `02_train_model.py` refuses to train into a folder that already holds checkpoints. Set `paths.checkpoints` and `paths.logs` in the config to a new folder, or pass `--overwrite`.
 
 To run the model on your own DEMs, use `sd_county_.py --pair TRANSECTS.shp DEM.tif --checkpoint ... --output-dir ...`. It samples each transect from the DEM and writes predictions, base and top shapefiles, and a GIF.
 

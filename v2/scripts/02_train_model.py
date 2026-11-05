@@ -84,6 +84,11 @@ def main():
         default=None,
         help='Device: cuda or cpu (overrides config)'
     )
+    parser.add_argument(
+        '--overwrite',
+        action='store_true',
+        help='Allow writing into a checkpoint folder that already holds checkpoints'
+    )
 
     args = parser.parse_args()
 
@@ -114,6 +119,17 @@ def main():
 
     if args.device:
         config['device'] = args.device
+
+    # The default checkpoint folder holds the published weights; never overwrite them by accident
+    log_dir = config['paths'].get('logs', 'experiments/runs/logs')
+    checkpoint_dir = config['paths'].get('checkpoints', 'experiments/runs/checkpoints')
+    existing = sorted(p.name for p in Path(checkpoint_dir).glob('*.pth'))
+    if existing and not args.overwrite:
+        sys.exit(
+            f"Error: {checkpoint_dir} already holds {', '.join(existing)}.\n"
+            "Set paths.checkpoints and paths.logs in the config to a new folder, "
+            "or pass --overwrite to replace them."
+        )
 
     # Set device
     device = config.get('device', 'cuda')
@@ -206,9 +222,6 @@ def main():
     print(f"  Trainable parameters: {trainable_params:,}")
 
     # Create trainer
-    log_dir = config['paths'].get('logs', 'experiments/runs/logs')
-    checkpoint_dir = config['paths'].get('checkpoints', 'experiments/runs/checkpoints')
-
     trainer = CliffDetectionTrainer(
         model=model,
         train_loader=train_loader,
