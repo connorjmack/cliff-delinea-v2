@@ -45,3 +45,10 @@ v2/outputs/
 # TensorBoard logs (the published run is archived with the weights)
 v2/scripts/experiments/*/logs/
 **/.claude/settings.local.json
+
+# Paper drafts and figure development
+paper/
+
+# External zero-shot validation datasets
+datasets/external/
+
